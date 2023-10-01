@@ -38,9 +38,13 @@ public class Igrac extends Thread{
                 output.println("MSG Your move");
             }
 
-            // Repeatedly get commands from the client and process them.
+            //Repeatedly get commands from the client and process them.
             while (true) {
                 String command = input.readLine();
+                if (command == null) {
+                    // Handle the case where the input stream is closed (e.g., the opponent disconnected).
+                    return;
+                }
                 if (command.startsWith("MOV")) {
                     int location = Integer.parseInt(command.substring(4));
                     int validlocation = Server.games.get(igraMark).legalMove(location, this);

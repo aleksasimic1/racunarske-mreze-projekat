@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Server {
 	public static ArrayList<Igra> games=new ArrayList<>();
 	public static void main(String[] args) throws Exception {
-        int port = 8901 , backlog = 5;
+        int port = 12345 , backlog = 5;
         String ip = "127.0.0.1";
         ServerSocket listener = new ServerSocket(port,3,InetAddress.getLocalHost());
         //listener.bind(SocketAddress);

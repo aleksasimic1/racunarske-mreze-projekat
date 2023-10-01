@@ -37,7 +37,7 @@ public class Main extends Application {
     private Circle currentCircle;
     private Label winLabel = new Label();
     private Stage primaryStage;
-    private static int PORT = 8901;
+    private static int PORT = 12345;
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
@@ -96,18 +96,20 @@ public class Main extends Application {
         String resp2;
         Runnable runnable=()->{
         	String resp;
+        	int flag = 0;
         	try {
     			
     			while(true) {
     				resp=in.readLine();
     				System.out.println(resp);
+    				
     				if(resp.startsWith("VALMOV"))
     				{
     					//winLabel.setText("Potez validan");
     					int loc=Integer.parseInt(resp.substring(6));
     					System.out.println((loc));
     					circles[loc].setFill(playerColor);
-    				}else if(resp.startsWith("OPMOV "))
+    				}else if(resp.startsWith("OPMOV ".trim()))
     				{
     					//winLabel.setText("Neprijatelj napravio potez");
     					int loc=Integer.parseInt(resp.substring(6));
@@ -116,40 +118,63 @@ public class Main extends Application {
     				}
     				else if(resp.startsWith("VICTORY"))
     				{
+    					flag = 1;
+    					gridPane.setDisable(true);
     					Platform.runLater(new Runnable() {
     						@Override
     						public void run() {
     							winLabel.setText("Pobjeda");
-    							Alert aler=new Alert(AlertType.INFORMATION);
+    							try {
+                                    socket.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+    							/*Alert aler=new Alert(AlertType.INFORMATION);
     	    					aler.setContentText("Pobjeda");
-    	    					aler.showAndWait();
+    	    					aler.showAndWait();*/
     						}
     					});
     					    					
     					
     				}else if(resp.startsWith("DEFEAT"))
     				{
+    					flag = 1;
+    					gridPane.setDisable(true);
     					Platform.runLater(new Runnable() {
     						@Override
     						public void run() {
-    							winLabel.setText("Pobjeda");
-    							Alert aler=new Alert(AlertType.INFORMATION);
+    							winLabel.setText("Poraz");
+    							try {
+                                    socket.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+    							/*Alert aler=new Alert(AlertType.INFORMATION);
             					aler.setContentText("Gubitak");
-            					aler.showAndWait();
+            					aler.showAndWait();*/
     						}
     					});
     					
     				}else if(resp.startsWith("TIE"))
     				{
+    					flag = 1;
+    					gridPane.setDisable(true);
     					Platform.runLater(new Runnable() {
     						@Override
     						public void run() {
-    							winLabel.setText("nerijeseno");
-    							Alert aler=new Alert(AlertType.INFORMATION);
+    							winLabel.setText("Nerijeseno");
+    							try {
+                                    socket.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+    							/*Alert aler=new Alert(AlertType.INFORMATION);
             					aler.setContentText("Nerijeseno");
-            					aler.showAndWait();
+            					aler.showAndWait();*/
     						}
     					});
+    					
+    					
     					
     				}else if(resp.startsWith("MSG"))
     				{
@@ -161,32 +186,21 @@ public class Main extends Application {
     						}
     					});
     				}
+    				
+    				
     			}
     		} catch (IOException e) {
     			// TODO Auto-generated catch block
-    			e.printStackTrace();
+    			//e.printStackTrace();
     		}
         };
         
         Thread t=new Thread(runnable);
         t.start();
-        //System.out.println(req+" "+resp2);
-        //this.setup();
         
-        /*if (row != -1 && circles[row][col].getFill() == Color.WHITE) {
-            circles[row][col].setFill(currentPlayer == 1 ? Color.RED : Color.YELLOW);
-            
-            
-            if (checkWin(row, col)) {
-                gridPane.setDisable(true);
-                winLabel.setText("Player " + currentPlayer + " wins!");
-            }
-            if(currentPlayer == 1)
-            	currentPlayer = 2;
-            else
-            	currentPlayer = 1;
-        }
-        */
+        
+        
+        
     }
 
 
@@ -197,6 +211,9 @@ public class Main extends Application {
     public static void main(String[] args) {
         Main main=new Main();
         main.wrapper(args);
+        
+        
+        
     }
     public void wrapper(String[] args)
     {
@@ -207,7 +224,7 @@ public class Main extends Application {
     public void setup()
     {
     	try {
-        	socket = new Socket("192.168.1.5", PORT);
+    		socket = new Socket("192.168.0.101", PORT);
 			in = new BufferedReader(new InputStreamReader(
 			    socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream(), true);
@@ -300,7 +317,7 @@ public class Main extends Application {
     	GridPane gridPane = createGridPane();
         VBox root = new VBox(gridPane, winLabel);
         root.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(root, 470, 500);
+        Scene scene = new Scene(root, 535, 500);
         primaryStage.setTitle("Connect 4");
         primaryStage.setScene(scene);
         primaryStage.show();

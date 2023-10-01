@@ -11,7 +11,7 @@ public class Igra {
 			null,null,null,null,null,null,null,
 			null,null,null,null,null,null,null,
 			null,null,null,null,null,null,null
-			,null,null,null,null,null,null};
+			,null,null,null,null,null,null, null};
 	public synchronized int legalMove(int location,Igrac player)
 	{
 		int minlocation = (location % 8)+8*5;
